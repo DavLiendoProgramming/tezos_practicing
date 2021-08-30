@@ -1,11 +1,10 @@
-const assert     = require('assert');
-const Completium = require('@completium/completium-cli');
+const assert = require('assert');
+const { deploy } = require('@completium/completium-cli');
 
 const test = async () => {
- const completium = new Completium ();
- await completium.originate('counter_two_numbers.arl');
- await completium.call('counter_two_numbers', { with: "(3,4)"});
- const storage = await completium.getStorage('counter_two_numbers');
+ const [counter, _] = await deploy('counter_two_numbers.arl');
+ await counter.default({ arg : { inc1 : 3, inc2 : 4 }});
+ const storage = await counter.getStorage();
  const v1 = storage.v1.toNumber();
  const v2 = storage.v2.toNumber();
  assert(v1 == 9, "Invalid v2 value");

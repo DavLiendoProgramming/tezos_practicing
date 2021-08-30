@@ -1,11 +1,18 @@
-const completium = new Completium ();
-const alice = completium.getAddress("alice");
-const start = Date.now();
-const stop  = new Date(start + 5 * 60 * 1000);
-await completium.originate('auction.arl', { init : "(" + alice + ", " + stop + ")", test : true } );
-await completium.setNow("auction", new Date(start));
-await completium.call("auction", { entry : "bid", as : "bob", amount : "10tz" });
-await completium.call("auction", { entry : "bid", as : "carl", amount : "15tz" });
-await completium.setNow("auction", stop);
-await completium.call("auction", { entry : "collectTopBid", as : "alice" });
-await completium.call("auction", { entry : "claim", as : "bob" });
+const assert = require('assert');
+const { deploy, getAddress } = require('@completium/completium-cli');
+
+const test = async () => {
+  const start = Date.now().toString();
+  const stop  = (Date.now() + 5 * 60 * 1000).toString();
+  const [auction, _] = await deploy('auction.arl', {
+    parameters : {  owner : getAddress("alice"), deadline : stop },
+    test : true
+  });
+  await auction._setNow(start);
+  await auction.bid({ as : "bob", amount : "10tz" });
+  await auction.bid({ as : "carl", amount : "15tz" });
+  await auction._setNow(stop);
+  await auction.collectTopBid({ as : "alice" });
+  await auction.claim({ as : "bob" });
+}
+test();
