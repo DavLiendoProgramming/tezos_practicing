@@ -9,9 +9,14 @@ RUN sudo cp ./ligo /usr/local/bin
 RUN sudo add-apt-repository ppa:serokell/tezos && sudo apt-get update
 RUN sudo apt-get install -y tezos-client
 RUN sudo apt-get install -y tezos-node
-RUN sudo apt-get install -y tezos-baker-008-ptedo2zk
-RUN sudo apt-get install -y tezos-endorser-008-ptedo2zk
-RUN sudo apt-get install -y tezos-accuser-008-ptedo2zk
+
+RUN sudo apt-get install -y tezos-baker-010-PtGRANAD
+RUN sudo apt-get install -y tezos-endorser-010-PtGRANAD
+RUN sudo apt-get install -y tezos-accuser-010-PtGRANAD
+
+#RUN sudo apt-get install -y tezos-baker-008-ptedo2zk
+#RUN sudo apt-get install -y tezos-endorser-008-ptedo2zk
+#RUN sudo apt-get install -y tezos-accuser-008-ptedo2zk
 
 # Install Completium
 
