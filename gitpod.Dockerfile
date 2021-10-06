@@ -10,6 +10,7 @@ RUN sudo add-apt-repository ppa:serokell/tezos && sudo apt-get update
 RUN sudo apt-get install -y tezos-client
 RUN sudo apt-get install -y tezos-node
 
+
 RUN sudo apt-get install -y tezos-baker-009-psfloren
 RUN sudo apt-get install -y tezos-endorser-009-psfloren
 RUN sudo apt-get install -y tezos-accuser-009-psfloren
