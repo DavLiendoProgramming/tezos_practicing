@@ -1,0 +1,34 @@
+type storage = [int, address, address];
+type action = ["Increment" , int] | ["Decrement"] | ["Reset"];
+
+let add = ([oldStorage, param]: [storage, int]) : storage => {
+    if(param >= 10){
+        return failwith("Only values lower than 10") as storage;
+    } else if(oldStorage[1] == Tezos.sender) {
+        return failwith("Cannot call add twice in a row") as storage;
+    } 
+    return [oldStorage[0] + param, Tezos.sender, oldStorage[2]];
+    };
+
+let sub  = (oldStorage: storage) : storage => {
+    if (Tezos.sender != oldStorage[2]) {
+        return failwith("Only the oldStorage[2] may decrement") as storage;
+    }
+    return [oldStorage[0] - 1, oldStorage[1], oldStorage[2]];
+};
+
+let reseter = (oldStorage: storage) : storage => {
+     if (Tezos.sender != oldStorage[2]) {
+        return failwith("Only the owner may reset") as storage;
+    }
+    return [0, oldStorage[1], oldStorage[2]];
+}
+
+let main = ([p, s] : [action, storage]) : [list<operation>, storage] => {
+   let stor = match(p, {
+      Increment : (n : int) => add(s, n),
+      Decrement : () => sub(s),
+      Reset : () => reseter(s)
+   });
+   return [list([]) as list<operation>, stor];
+}

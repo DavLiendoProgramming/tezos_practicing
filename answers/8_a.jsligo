@@ -1,0 +1,38 @@
+type storage = [tez,  address];
+type action = | ["Collect" , tez] | ["Deposit", tez];
+
+let collect = ([oldStorage, reqAmount] : [storage, tez] ): [list<operation>, storage] => {
+    if(Tezos.sender != oldStorage[1]) {
+      failwith('only owner call collect') ;
+    } else if(reqAmount < oldStorage[0]) {
+      failwith('Max amount exceeded') ;
+    }
+    let contractOpt = Tezos.get_contract_opt (oldStorage[1]) as option<contract<unit>>;
+    let receiver: contract<unit> = match (contractOpt, {
+        Some: (contract : any) => contract,
+        None: () => failwith("Contract not found.") as contract<unit>
+    });
+    let op : operation = Tezos.transaction(unit, reqAmount, receiver);
+    let newStorage = [oldStorage[0] - reqAmount, oldStorage[1]];
+
+    return [list([op]), newStorage ];
+};
+
+let deposit = ([oldStorage, _amount] : [storage, tez]) : [list<operation>, storage] => {
+
+  if(_amount != Tezos.amount){
+    failwith('The specified amount is not equal to the deposit');
+  }
+
+  let newStorage = [Tezos.amount + oldStorage[0], oldStorage[1]];
+  
+  return [list([]) as list<operation>, newStorage];
+}
+
+let main = ([p,s]: [action, storage]) : [list<operation>, storage] => {
+  let [ops,s] = match(p, {
+    Collect: (n : tez) => collect(s,n),
+    Deposit: (n : tez) => deposit(s,n)
+  })
+  return [ops, s];
+};

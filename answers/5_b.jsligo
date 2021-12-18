@@ -1,0 +1,6 @@
+let main = ([param, oldStorage] : [string, [string, int]]) : [list<operation>, [string, int]] => {
+    let [oldString, oldCounter] = oldStorage;
+    let newString = oldString + "," + param;
+    let newCounter = oldCounter + 1;
+    return [list([]) as list<operation>, [newString, newCounter]];
+}
